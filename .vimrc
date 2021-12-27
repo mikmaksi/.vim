@@ -1,58 +1,11 @@
-"" General
-set number   " Show line numbers
-set linebreak	" Break lines at word (requires Wrap lines)
-set showbreak=+++   " Wrap-broken line prefix
-set textwidth=100   " Line wrap (number of cols)
-set showmatch	" Highlight matching brace
-set visualbell	" Use visual bell (no beeping)
- 
-set hlsearch	" Highlight all search results
-set smartcase	" Enable smart-case search
-set ignorecase	" Always case-insensitive
-set incsearch	" Searches for strings incrementally
-  
-set autoindent    " Auto-indent new lines
-set shiftwidth=4  " Number of auto-indent spaces
-set smartindent   " Enable smart-indent
-set smarttab	" Enable smart-tabs
-set softtabstop=4 " Number of spaces per Tab
+"" Plugins using vim-plug
 
-set foldmethod=indent " folding
-set nowrap " wrapping
-
-"" Line width
-set tw=200
-   
-"" Advanced
-set ruler	" Show row and column ruler information
-set undolevels=1000	" Number of undo levels
-set backspace=indent,eol,start  " Backspace behaviour
-
-"" Buffers
-set hidden
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
-let g:buftabline_numbers=1 " display the buffer id in the tabline
-
-"" Searching
-vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
-
-"" Quoting 
-nnoremap qq bi'<ESC>ea'<ESC>
-
-"" Indenting
-nnoremap si :set foldmethod=indent<CR>
-nnoremap ss :set foldmethod=syntax<CR>
-
-"" disable plugins
-"" let g:plugs_disabled = ['vim-buftabline']
-let g:plugs_disabled = []
-
-"" vim-plug
 call plug#begin('~/.vim/plugged')
+
+"" Common utilities
+Plug 'junegunn/vim-plug' " Manage itself for help docs
 Plug 'jpalardy/vim-slime',  { 'branch': 'main' }
-Plug 'ap/vim-buftabline'
-Plug 'preservim/nerdtree'
+"" Plug 'ap/vim-buftabline'
 Plug 'tpope/vim-surround'
 Plug 'will133/vim-dirdiff'
 Plug 'godlygeek/tabular'
@@ -61,6 +14,10 @@ Plug 'elzr/vim-json'
 Plug 'tomtom/tlib_vim'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'garbas/vim-snipmate'
+Plug 'preservim/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'rykka/riv.vim' " wiki style note taking
 
 "" R
 Plug 'jalvesaq/Nvim-R'
@@ -68,55 +25,95 @@ Plug 'plasticboy/vim-markdown'
 Plug 'vim-pandoc/vim-rmarkdown'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
-
+ 
 "" Python
 Plug 'davidhalter/jedi-vim'
-Plug 'vim-python/python-syntax'
-Plug 'GCBallesteros/jupytext.vim'
+"" Plug 'GCBallesteros/jupytext.vim'
+"" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
 "" Rust
-Plug 'rykka/riv.vim'
 Plug 'racer-rust/vim-racer'
 
-"" appearance
+"" Appearance
 Plug 'junegunn/seoul256.vim'
 Plug 'jonathanfilip/vim-lucius'
 
-call plug_disable#commit()
 call plug#end()
 
-"" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+"" General
+set number      " Show line numbers
+set linebreak	" Break lines at word (requires Wrap lines)
+set showbreak=+++   " Wrap-broken line prefix
+set textwidth=200   " Line wrap (number of cols)
+set showmatch	" Highlight matching brace
+set visualbell	" Use visual bell (no beeping)
 
-"" pathogen.vim
-"" execute pathogen#infect()
+"" Searching
+set hlsearch	" Highlight all search results
+set smartcase	" Enable smart-case search
+set ignorecase	" Always case-insensitive
+set incsearch	" Searches for strings incrementally
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
-"" Rule for custom file types
+"" Indentation
+set autoindent    " Auto-indent new lines
+set shiftwidth=4  " Number of auto-indent spaces
+set smartindent   " Enable smart-indent
+set smarttab	" Enable smart-tabs
+set softtabstop=4 " Number of spaces per Tab
+
+"" Folding
+set foldmethod=indent " folding
+set nowrap " wrapping
+
+"" Advanced
+set ruler	" Show row and column ruler information
+set undolevels=1000	" Number of undo levels
+set backspace=indent,eol,start  " Backspace behaviour
+
+"" Custom file type rules
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-"" Nvim-R settings
+"" Key-bind for airline/buftabline tab naviation
+set hidden " for use with airline or buftabline
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
+
+"" Key-bind for vim-surround
+nnoremap q' bi'<ESC>ea'<ESC>
+nnoremap q" bi"<ESC>ea"<ESC>
+
+"" Key-bind for code folding
+nnoremap si :set foldmethod=indent<CR>
+nnoremap ss :set foldmethod=syntax<CR>
+
+"" Airline options
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='bubblegum'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+"" Nvim-R options
 let R_assign = 0
 let R_path = '/home/mmaksimov/miniconda3/bin'
 let R_nvimcom_home = '/home/mmaksimov/miniconda3/lib/R/library/nvimcom'
 
-"" Color theme
+"" Color themes
 colo lucius
 LuciusDark
 "" LuciusLightHighContrast
 
-"" rimvim rst editor options
-let proj1 = { 'path': '/projects/ps-gymreklab/mikhail/genet_elem_pull_tutorial/gymreklab.github.io/doc', }
-let g:riv_projects = [proj1]
-
-"" Load NERDTree file explorer
+"" Load NERDTree file explorer on startup
 autocmd vimenter * NERDTree
 
-"" vim-slime
+"" vim-slime options
 let g:slime_target = "vimterminal"
 let g:slime_vimterminal_cmd = "ipython"
 let g:slime_vimterminal_config = {"vertical" : 1, "term_finish": "close"}
 let g:slime_python_ipython = 1
-"" NOTE: this doesn't interfere with Nvim-R
 let g:slime_no_mappings = 1
+  
+"" Key-bind for vim-slime; these do not interfere with Nvim-R
 xmap <leader>ss <Plug>SlimeRegionSend
 nmap <leader>ss <Plug>SlimeMotionSend
 nmap <leader>l <Plug>SlimeLineSend
@@ -126,7 +123,7 @@ nmap <leader>rf <Plug>SlimeConfig
 let g:pandoc#toc#close_after_navigating=0
 let g:pandoc#toc#position='bottom'
 
-"" jedi-vim
+"" jedi-vim options
 let g:jedi#popup_on_dot=0
 let g:jedi#show_call_signatures=1
 let g:jedi#show_call_signatures_delay=100
@@ -138,7 +135,11 @@ let g:python_highlight_all = 1
 "" snipMate options
 let g:snipMate = { 'snippet_version' : 1 }
 
-"" file templates
+"" riv.vim options
+let proj1 = { 'path': '/projects/ps-gymreklab/mikhail/genet_elem_pull_tutorial/gymreklab.github.io/doc', }
+let g:riv_projects = [proj1]
+
+"" Register file templates
 if has("autocmd")
   augroup templates
     autocmd BufNewFile *.sh 0r ~/.vim/templates/skeleton.sh
@@ -160,11 +161,8 @@ augroup Racer
     autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
 augroup END
 
-"" this is skip a terminal containing window when using :bprev, :bnext
+"" ignore terminal-type windows when using :bprev, :bnext
 augroup termIgnore
   autocmd!
   autocmd TerminalOpen * set nobuflisted
 augroup END
-
-"" jupytext-vim
-let g:jupytext_filetype_map = {'md': 'rmd'}
