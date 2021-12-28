@@ -57,10 +57,9 @@ vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 "" Indentation
 set autoindent    " Auto-indent new lines
-set shiftwidth=4  " Number of auto-indent spaces
-set smartindent   " Enable smart-indent
-set smarttab	" Enable smart-tabs
+set tabstop=4     " NUmber of spaces that a \t character is worth
 set softtabstop=4 " Number of spaces per Tab
+set shiftwidth=4  " Number of auto-indent spaces
 
 "" Folding
 set foldmethod=indent " folding
@@ -70,8 +69,9 @@ set nowrap " wrapping
 set ruler	" Show row and column ruler information
 set undolevels=1000	" Number of undo levels
 set backspace=indent,eol,start  " Backspace behaviour
+"" set listchars=space:_,tab:>~ list
 
-"" Custom file type rules
+"" Custom file type rules; never use \t
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 "" Key-bind for airline/buftabline tab naviation
@@ -88,9 +88,11 @@ nnoremap si :set foldmethod=indent<CR>
 nnoremap ss :set foldmethod=syntax<CR>
 
 "" Airline options
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme='bubblegum'
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#show_tabs = 0
 let g:airline#extensions#tabline#buffer_nr_show = 1
 
 "" Nvim-R options
