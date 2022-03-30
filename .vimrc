@@ -17,7 +17,10 @@ Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'rykka/riv.vim' " wiki style note taking
+Plug 'cjrh/vim-conda'
+
+"" debugging
+Plug 'puremourning/vimspector'
 
 "" R
 Plug 'jalvesaq/Nvim-R'
@@ -37,6 +40,11 @@ Plug 'racer-rust/vim-racer'
 "" Appearance
 Plug 'junegunn/seoul256.vim'
 Plug 'jonathanfilip/vim-lucius'
+Plug 'morhetz/gruvbox'
+
+"" Git
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 
 call plug#end()
 
@@ -87,6 +95,14 @@ nnoremap q" bi"<ESC>ea"<ESC>
 nnoremap si :set foldmethod=indent<CR>
 nnoremap ss :set foldmethod=syntax<CR>
 
+"" Key-bind for HOME and END keys
+nmap <C-A> <Home>
+imap <C-A> <Home>
+vmap <C-A> <Home>
+nmap <C-E> <End>
+imap <C-E> <End>
+vmap <C-E> <End>
+
 "" Airline options
 let g:airline_theme='bubblegum'
 let g:airline_powerline_fonts = 1
@@ -95,15 +111,29 @@ let g:airline#extensions#tabline#show_buffers = 1
 let g:airline#extensions#tabline#show_tabs = 0
 let g:airline#extensions#tabline#buffer_nr_show = 1
 
-"" Nvim-R options
+"" R options
 let R_assign = 0
-let R_path = '/home/mmaksimov/miniconda3/bin'
-let R_nvimcom_home = '/home/mmaksimov/miniconda3/lib/R/library/nvimcom'
+"" below are not necessary on OSX
+"" let R_path = '/home/mmaksimov/miniconda3/bin'
+"" let R_nvimcom_home = '/home/mmaksimov/miniconda3/lib/R/library/nvimcom'
 
-"" Color themes
-colo lucius
-LuciusDark
+"" R reset files types (overwrite what vim-rmarkdown ftdetect does)
+augroup rmarkdown
+	autocmd BufNewFile,BufRead *.Rmd set ft=rmd
+	autocmd BufNewFile,BufRead *.rmd set ft=rmd
+augroup END
+
+"" Color theme lucius
+"" colo lucius
+"" LuciusDark
+"" LuciusDarkLowContrast
 "" LuciusLightHighContrast
+
+"" Color theme gruvbox
+let g:gruvbox_italic=1
+let g:gruvbox_contrast_dark="medium"
+colo gruvbox
+set bg=dark
 
 "" Load NERDTree file explorer on startup
 autocmd vimenter * NERDTree
@@ -117,8 +147,9 @@ let g:slime_no_mappings = 1
   
 "" Key-bind for vim-slime; these do not interfere with Nvim-R
 xmap <leader>ss <Plug>SlimeRegionSend
-nmap <leader>ss <Plug>SlimeMotionSend
 nmap <leader>l <Plug>SlimeLineSend
+"" send between two marks
+nmap <leader>bb ['V]'<Plug>SlimeRegionSend
 nmap <leader>rf <Plug>SlimeConfig
 
 "" vim-pandoc options
@@ -137,9 +168,17 @@ let g:python_highlight_all = 1
 "" snipMate options
 let g:snipMate = { 'snippet_version' : 1 }
 
-"" riv.vim options
-let proj1 = { 'path': '/projects/ps-gymreklab/mikhail/genet_elem_pull_tutorial/gymreklab.github.io/doc', }
-let g:riv_projects = [proj1]
+"" vim-conda options
+let g:conda_startup_wrn_suppress = 1
+let g:conda_startup_msg_suppress = 1
+
+"" vimspector
+let g:vimspector_enable_mappings = 'HUMAN'
+
+"" vim-fugitive and vim-rhubarb
+nnoremap <Leader>gB :Gblame<CR> " git blame
+nnoremap <Leader>gb :Gblame<CR> " open current line in the browser
+nnoremap <Leader>gb :Gblame<CR> " open visual selection in the browser
 
 "" Register file templates
 if has("autocmd")
@@ -148,6 +187,7 @@ if has("autocmd")
     autocmd BufNewFile *.R,*.r 0r ~/.vim/templates/skeleton.R
     autocmd BufNewFile *.Rmd,*.rmd 0r ~/.vim/templates/skeleton.Rmd
     autocmd BufNewFile *.qsub.sh 0r ~/.vim/templates/skeleton.qsub.sh
+    autocmd BufNewFile *.py 0r ~/.vim/templates/skeleton.py
   augroup END
 endif
 

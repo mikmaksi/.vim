@@ -1,4 +1,4 @@
-#!/home/momaksimov/anaconda3/envs/r4/bin/Rscript
+#!~/mambaforge/envs/r/bin/Rscript
 
 # about:
 
@@ -9,6 +9,7 @@ options(stringsAsFactors = FALSE, dplyr.summarise.inform = FALSE)
 library(tidyverse)
 library(cowplot)
 library(fs)
+library(DBI)
+library(dbplyr)
 
 # config
-
