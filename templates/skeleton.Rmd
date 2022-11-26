@@ -3,11 +3,23 @@ title: "My Data Report"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: 
   html_document:
-      df_print: paged
-      code_folding: hide
-      toc: true
-      toc_float: true
-      number_sections: true
+    df_print: paged
+    code_folding: hide
+    toc: true
+    toc_float: true
+    number_sections: true
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.13.8
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
 ---
 
 <!-- Set with output width -->
@@ -26,59 +38,18 @@ h6 {font-size: 0.75em}
 </style>
 
 ```{r setup, include=FALSE}
-    # options
-    knitr::opts_chunk$set(echo = TRUE)
-    options(stringsAsFactors = FALSE)
+# options
+knitr::opts_chunk$set(echo = TRUE)
+options(stringsAsFactors = FALSE)
 
-    # libraries
-    library(tidyverse)
-    library(cowplot)
-    library(fs)
-    library(ggrepel)
-    library(flextable)
-    # library(jsonlite)
-    # library(ggbeeswarm)
-    # library(ggh4x)
-    # library(ggforce)
+# libraries
+library(tidyverse)
+library(cowplot)
+library(fs)
+library(ggrepel)
+library(flextable)
+# library(jsonlite)
+# library(ggbeeswarm)
+# library(ggh4x)
+# library(ggforce)
 ```
-
-<!-- hidden section template 
-<details>
-  <summary><b>EXPAND</b></summary>
-```{r cache = TRUE, cache.extra = Sys.Date()}
-```
-</details>
--->
-
-<!-- biomart template
-```{r cache = TRUE, cache.extra = Sys.Date()}
-    # connect to Ensembl
-    e102 = biomaRt::useEnsembl(
-        biomart = 'genes',
-        host = 'http://nov2020.archive.ensembl.org', 
-        dataset = 'mmusculus_gene_ensembl',
-        version = 102, verbose = TRUE)
-
-    # get genes
-    attr_to_get = c(
-	gene_id   = "ensembl_gene_id",
-	tx_id     = "ensembl_transcript_id",
-	gene_name = "external_gene_name",
-	tss       = "transcription_start_site",
-	tx_pos    = "transcript_start",
-	tx_end    = "transcript_end",
-	exon_id   = "ensembl_exon_id",
-	exon_pos  = "exon_chrom_start",
-	exon_end  = "exon_chrom_end",
-	cds_start = "cds_start",
-	cds_stop  = "cds_end")
-    tx_info = biomaRt::getBM(
-	attributes = attr_to_get,
-	filters = c('ensembl_gene_id', 'transcript_biotype'), 
-	values = list(c('ENSMUSG00000014850', 'ENSMUSG00000021707'), c('protein_coding')), 
-	mart = e102) %>% as_tibble
-
-    # rename columns
-    tx_info = tx_info %>% rename(attr_to_get)
-```
--->

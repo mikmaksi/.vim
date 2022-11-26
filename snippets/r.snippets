@@ -37,3 +37,15 @@ snippet con
 	dbWriteTable(conn = conn, name = ${2:tblname}, value = ${3:tbl}, overwrite = TRUE) 
 	tbl(conn, sql(${4:query})) %>% collect()
 	dbDisconnect(conn)
+
+snippet d
+	# %%
+
+snippet m
+	# %% [markdown]
+
+snippet cell
+	# %% [markdown]
+	# #
+
+	# %%

@@ -18,9 +18,11 @@ Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'cjrh/vim-conda'
+Plug 'AndrewRadev/linediff.vim'
+Plug 'shinglyu/vim-codespell'
 
 "" debugging
-Plug 'puremourning/vimspector'
+"" Plug 'puremourning/vimspector'
 
 "" R
 Plug 'jalvesaq/Nvim-R'
@@ -31,11 +33,22 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
  
 "" Python
 Plug 'davidhalter/jedi-vim'
+Plug 'vim-python/python-syntax'
+Plug 'fs111/pydoc.vim'
+Plug 'hanschen/vim-ipython-cell'
+"" Plug 'untitled-ai/jupyter_ascending.vim'
+"" Plug 'goerz/jupytext.vim' # jupyter_ascending.vim does a better job syncing
 "" Plug 'GCBallesteros/jupytext.vim'
 "" Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+"" Plug 'ycm-core/YouCompleteMe'
+"" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'dense-analysis/ale'
 
 "" Rust
 Plug 'racer-rust/vim-racer'
+
+"" Terraform
+Plug 'hashivim/vim-terraform'
 
 "" Appearance
 Plug 'junegunn/seoul256.vim'
@@ -46,6 +59,9 @@ Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
+"" tags
+Plug 'preservim/tagbar'
+
 call plug#end()
 
 "" General
@@ -55,6 +71,9 @@ set showbreak=+++   " Wrap-broken line prefix
 set textwidth=200   " Line wrap (number of cols)
 set showmatch	" Highlight matching brace
 set visualbell	" Use visual bell (no beeping)
+inoremap ;; <Esc>
+vnoremap ;; <Esc>
+nnoremap <C-s> <C-e>
 
 "" Searching
 set hlsearch	" Highlight all search results
@@ -69,6 +88,10 @@ set tabstop=4     " NUmber of spaces that a \t character is worth
 set softtabstop=4 " Number of spaces per Tab
 set shiftwidth=4  " Number of auto-indent spaces
 
+"" Cursor
+set cursorcolumn
+set cursorline
+
 "" Folding
 set foldmethod=indent " folding
 set nowrap " wrapping
@@ -81,6 +104,8 @@ set backspace=indent,eol,start  " Backspace behaviour
 
 "" Custom file type rules; never use \t
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+autocmd FileType sql setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+autocmd FileType plm setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 "" Key-bind for airline/buftabline tab naviation
 set hidden " for use with airline or buftabline
@@ -103,6 +128,9 @@ nmap <C-E> <End>
 imap <C-E> <End>
 vmap <C-E> <End>
 
+"" Key-bind for avoiding the Esc key
+"" imap jj <ESC>
+
 "" Airline options
 let g:airline_theme='bubblegum'
 let g:airline_powerline_fonts = 1
@@ -121,6 +149,11 @@ let R_assign = 0
 augroup rmarkdown
 	autocmd BufNewFile,BufRead *.Rmd set ft=rmd
 	autocmd BufNewFile,BufRead *.rmd set ft=rmd
+augroup END
+
+"" open windows .INP files as plm
+augroup INP
+	autocmd BufNewFile,BufRead *.INP set ft=plm
 augroup END
 
 "" Color theme lucius
@@ -144,13 +177,56 @@ let g:slime_vimterminal_cmd = "ipython"
 let g:slime_vimterminal_config = {"vertical" : 1, "term_finish": "close"}
 let g:slime_python_ipython = 1
 let g:slime_no_mappings = 1
-  
 "" Key-bind for vim-slime; these do not interfere with Nvim-R
-xmap <leader>ss <Plug>SlimeRegionSend
-nmap <leader>l <Plug>SlimeLineSend
-"" send between two marks
-nmap <leader>bb ['V]'<Plug>SlimeRegionSend
+"" xmap <leader>ss <Plug>SlimeRegionSend
+"" nmap <leader>l <Plug>SlimeLineSend
+"" send between two marks (this is not needed if using vim-ipython-cell
+"" nmap <leader>bb ['V]'<Plug>SlimeRegionSend
 nmap <leader>rf <Plug>SlimeConfig
+
+"" vim-ipython-cell options
+let g:ipython_cell_tag = ['# %%'] " to avoid ambiguity with ## which is part of the default
+let g:ipython_cell_delimit_cells_by='marks' " this can be switched to tags
+" map <Leader>rf to start IPython
+" nnoremap <Leader>rf :SlimeSend1 ipython --matplotlib<CR>
+
+" map <Leader>a to run script
+nnoremap <Leader>a :IPythonCellRun<CR>
+
+" map <Leader>A to run script and time the execution
+nnoremap <Leader>A :IPythonCellRunTime<CR>
+
+" map <Leader>c to execute the current cell
+nnoremap <Leader>cc :IPythonCellExecuteCell<CR>
+
+" map <Leader>C to execute the current cell and jump to the next cell
+nnoremap <Leader>CC :IPythonCellExecuteCellJump<CR>
+
+" map <Leader>h to clear IPython screen
+nnoremap <Leader>h :IPythonCellClear<CR>
+
+" map <Leader>x to close all Matplotlib figure windows
+" nnoremap <Leader>x :IPythonCellClose<CR>
+
+" map [c and ]c to jump to the previous and next cell header
+nnoremap [c :IPythonCellPrevCell<CR>
+nnoremap ]c :IPythonCellNextCell<CR>
+
+" map <Leader>h to send the current line or current selection to IPython
+nmap <Leader>l <Plug>SlimeLineSend
+xmap <Leader>ss <Plug>SlimeRegionSend
+
+" map <Leader>p to run the previous command
+nnoremap <Leader>p :IPythonCellPrevCommand<CR>
+
+" map <Leader>Q to restart ipython
+nnoremap <Leader>Q :IPythonCellRestart<CR>
+
+" map <Leader>d to start debug mode
+" nnoremap <Leader>d :SlimeSend1 %debug<CR>
+
+" map <Leader>q to exit debug mode or IPython
+nnoremap <Leader>q :SlimeSend1 exit<CR>
 
 "" vim-pandoc options
 let g:pandoc#toc#close_after_navigating=0
@@ -174,6 +250,27 @@ let g:conda_startup_msg_suppress = 1
 
 "" vimspector
 let g:vimspector_enable_mappings = 'HUMAN'
+
+"" tagbar
+nnoremap <silent> <F8> :TagbarToggle<CR>
+
+"" tagbar for R configuration
+let g:tagbar_type_r = {
+    \ 'ctagstype' : 'r',
+    \ 'kinds'     : [
+        \ 'f:Functions',
+        \ 'g:GlobalVariables',
+        \ 'v:FunctionVariables',
+    \ ]
+\ }
+
+"" jupytext
+"" let g:jupytext_fmt = 'Rmd'
+"" let g:jupytext_fmt = 'py:percent'
+
+"" jupyter_ascending (not sure I want this plugin anymore)
+"" nmap <space><space>x <Plug>JupyterExecute
+"" nmap <space><space>X <Plug>JupyterExecuteAll
 
 "" vim-fugitive and vim-rhubarb
 nnoremap <Leader>gB :Gblame<CR> " git blame
@@ -202,6 +299,13 @@ augroup Racer
     autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
     autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
 augroup END
+
+"" ALE
+let g:ale_linters = {'python': ['flake8']}
+let g:ale_fixers = {'python': ['black']}
+let g:ale_python_flake8_options = '--max-line-length=120'
+let g:ale_python_black_options = '-l 120'
+"" let g:ale_fix_on_save = 1
 
 "" ignore terminal-type windows when using :bprev, :bnext
 augroup termIgnore
