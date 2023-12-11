@@ -9,3 +9,44 @@ snippet cell
 	# #
 
 	# %%
+
+snippet table_test
+	def test_method(self):
+	
+	    @dataclass
+	    class TestCase:
+	        name: str
+	
+	    test_cases = [
+	        TestCase(name=""),
+	    ]
+	
+	    for case in test_cases:
+	        with self.subTest(case.name):
+	            # Run test
+	            pass
+
+snippet table_test_exception
+	def test_method(self):
+
+	    @dataclass
+	    class TestCase:
+	        name: str
+
+	        # Test outputs
+	        expect_error_type: Exception = Exception()
+	        expect_error_message: str = ''
+
+	    test_cases = [
+	        TestCase(name=''),
+	    ]
+
+	    for case in test_cases:
+	        with self.subTest(case.name):
+	            # Setup
+	            with self.assertRaises(case.expect_error_type) as e:
+	                # Act
+	                pass
+	            if isinstance(e.exception, LoggableException):
+	                self.assertEqual(case.expect_error_type, type(e.exception))
+	            self.assertIn(case.expect_error_message, str(e.exception))

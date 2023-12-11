@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: <NS>-<NAME>
+  namespace: <NS>
+spec:
+  entrypoint: <NS>-<ENTRYPOINT>
+  serviceAccountName: <NS>-worker
+  volumes:
+    - name: <NS>-efs
+      persistentVolumeClaim:
+        claimName: <NS>-efs
+  ttlStrategy:
+    secondsAfterSuccess: 300
+  arguments:
+    parameters:
+      - name: ...
+  templates:
+    - name: <NS>-<ENTRYPOINT>
+      inputs:
+        parameters:
+          - name: <PARAM>
+            value: "{{inputs.parameters....}}"
+      dag:
+        tasks:
+          - name: ...
+            templateRef:
+              name: ...
+              template: ...
+            arguments:
+              parameters:
+                - name: ...
+                  value: ...
+      outputs:
+        parameters:
+          - name: ...
+            valueFrom:
+              parameter: "{{tasks.<TASK>.outputs.parameters.<PARAM>}}"
+    - name: ...
+      inputs:
+        parameters:
+          - name: <PARAM>
+      podSpecPatch: |
+        containers:
+          - name: main
+            resources:
+              requests:
+                memory: "{{inputs.parameters.memory-requested}}"
+                cpu: "{{inputs.parameters.cpu-requested}}"
+              limits:
+                memory: "{{inputs.parameters.memory-requested}}"
+                cpu: "{{inputs.parameters.cpu-requested}}"
+      container:
+        image: "<CONTAINER_ARN>"
+        command:
+          - ...
+        args:
+          - ...
+        volumeMounts:
+          - name: <NS>-efs
+            mountPath: /efs
+        env:
+          - name: ...
+            value: ...
+      outputs:
+        parameters:
+          - name: ...
+            valueFrom:
+              path: "/tmp/output.txt"

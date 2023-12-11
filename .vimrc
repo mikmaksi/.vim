@@ -17,9 +17,16 @@ Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'cjrh/vim-conda'
+"" Plug 'cjrh/vim-conda'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'shinglyu/vim-codespell'
+Plug 'rizzatti/dash.vim'
+"" Plug 'jceb/vim-orgmode'
+Plug 'github/copilot.vim', {'branch': 'release'}
+
+"" searching
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"" Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
 
 "" debugging
 "" Plug 'puremourning/vimspector'
@@ -36,6 +43,7 @@ Plug 'davidhalter/jedi-vim'
 Plug 'vim-python/python-syntax'
 Plug 'fs111/pydoc.vim'
 Plug 'hanschen/vim-ipython-cell'
+Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 "" Plug 'untitled-ai/jupyter_ascending.vim'
 "" Plug 'goerz/jupytext.vim' # jupyter_ascending.vim does a better job syncing
 "" Plug 'GCBallesteros/jupytext.vim'
@@ -43,6 +51,7 @@ Plug 'hanschen/vim-ipython-cell'
 "" Plug 'ycm-core/YouCompleteMe'
 "" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'dense-analysis/ale'
+Plug 'fisadev/vim-isort'
 
 "" Rust
 Plug 'racer-rust/vim-racer'
@@ -104,6 +113,7 @@ set backspace=indent,eol,start  " Backspace behaviour
 
 "" Custom file type rules; never use \t
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+autocmd FileType rmd setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 autocmd FileType sql setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 autocmd FileType plm setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
@@ -156,6 +166,11 @@ augroup INP
 	autocmd BufNewFile,BufRead *.INP set ft=plm
 augroup END
 
+"" open windows .jsl files as sas
+augroup INP
+	autocmd BufNewFile,BufRead *.jsl set ft=sas
+augroup END
+
 "" Color theme lucius
 "" colo lucius
 "" LuciusDark
@@ -186,7 +201,8 @@ nmap <leader>rf <Plug>SlimeConfig
 
 "" vim-ipython-cell options
 let g:ipython_cell_tag = ['# %%'] " to avoid ambiguity with ## which is part of the default
-let g:ipython_cell_delimit_cells_by='marks' " this can be switched to tags
+"" let g:ipython_cell_delimit_cells_by='marks' " this can be switched to tags
+let g:ipython_cell_delimit_cells_by='tags' " this can be switched to tags
 " map <Leader>rf to start IPython
 " nnoremap <Leader>rf :SlimeSend1 ipython --matplotlib<CR>
 
@@ -245,8 +261,8 @@ let g:python_highlight_all = 1
 let g:snipMate = { 'snippet_version' : 1 }
 
 "" vim-conda options
-let g:conda_startup_wrn_suppress = 1
-let g:conda_startup_msg_suppress = 1
+"" let g:conda_startup_wrn_suppress = 1
+"" let g:conda_startup_msg_suppress = 1
 
 "" vimspector
 let g:vimspector_enable_mappings = 'HUMAN'
@@ -277,6 +293,15 @@ nnoremap <Leader>gB :Gblame<CR> " git blame
 nnoremap <Leader>gb :Gblame<CR> " open current line in the browser
 nnoremap <Leader>gb :Gblame<CR> " open visual selection in the browser
 
+"" Pydoc
+let g:pydocstring_formatter = 'google'
+let g:pydocstring_enable_mapping = 0
+
+"" copilot
+imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+imap <C-K> <Plug>(copilot-next)
+
 "" Register file templates
 if has("autocmd")
   augroup templates
@@ -285,8 +310,13 @@ if has("autocmd")
     autocmd BufNewFile *.Rmd,*.rmd 0r ~/.vim/templates/skeleton.Rmd
     autocmd BufNewFile *.qsub.sh 0r ~/.vim/templates/skeleton.qsub.sh
     autocmd BufNewFile *.py 0r ~/.vim/templates/skeleton.py
+    autocmd BufNewFile *.argo.yaml 0r ~/.vim/templates/skeleton.argo.yaml
   augroup END
 endif
+
+"" Snakefile syntax
+au BufNewFile,BufRead Snakefile set syntax=snakemake
+au BufNewFile,BufRead *.snake set syntax=snakemake
 
 "" Rust
 let g:racer_cmd = "/home/mmaksimov/.cargo/bin/racer"
@@ -301,11 +331,13 @@ augroup Racer
 augroup END
 
 "" ALE
-let g:ale_linters = {'python': ['flake8']}
-let g:ale_fixers = {'python': ['black']}
+let g:ale_linters = {'python': ['flake8', 'ruff']}
+let g:ale_fixers = {'python': ['black'], 'yaml': ['yamlfix']}
 let g:ale_python_flake8_options = '--max-line-length=120'
 let g:ale_python_black_options = '-l 120'
+let g:ale_python_ruff_options = '-l 120'
 "" let g:ale_fix_on_save = 1
+let g:ale_virtualtext_cursor = 'disabled'
 
 "" ignore terminal-type windows when using :bprev, :bnext
 augroup termIgnore
