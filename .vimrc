@@ -22,7 +22,7 @@ Plug 'AndrewRadev/linediff.vim'
 Plug 'shinglyu/vim-codespell'
 Plug 'rizzatti/dash.vim'
 "" Plug 'jceb/vim-orgmode'
-Plug 'github/copilot.vim', {'branch': 'release'}
+"" Plug 'github/copilot.vim', {'branch': 'release'}
 
 "" searching
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -41,6 +41,7 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 "" Python
 Plug 'davidhalter/jedi-vim'
 Plug 'vim-python/python-syntax'
+"" Plug 'mdomke/python-syntax'  "" fork with match/case highlighting
 Plug 'fs111/pydoc.vim'
 Plug 'hanschen/vim-ipython-cell'
 Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
@@ -54,7 +55,7 @@ Plug 'dense-analysis/ale'
 Plug 'fisadev/vim-isort'
 
 "" Rust
-Plug 'racer-rust/vim-racer'
+"" Plug 'racer-rust/vim-racer'
 
 "" Terraform
 Plug 'hashivim/vim-terraform'
@@ -63,6 +64,8 @@ Plug 'hashivim/vim-terraform'
 Plug 'junegunn/seoul256.vim'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'morhetz/gruvbox'
+Plug 'nordtheme/vim', {'branch': 'main'} 
+
 
 "" Git
 Plug 'tpope/vim-fugitive'
@@ -113,7 +116,8 @@ set backspace=indent,eol,start  " Backspace behaviour
 
 "" Custom file type rules; never use \t
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
-autocmd FileType rmd setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+autocmd FileType rmd setlocal tabstop=4 expandtab shiftwidth=2 softtabstop=2
+autocmd FileType r setlocal tabstop=4 expandtab shiftwidth=2 softtabstop=2
 autocmd FileType sql setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 autocmd FileType plm setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
@@ -171,6 +175,12 @@ augroup INP
 	autocmd BufNewFile,BufRead *.jsl set ft=sas
 augroup END
 
+"" R language server
+"" could not get this to work in Rmd anyway
+"" let g:LanguageClient_serverCommands = {
+""     \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
+""     \ }
+
 "" Color theme lucius
 "" colo lucius
 "" LuciusDark
@@ -182,6 +192,9 @@ let g:gruvbox_italic=1
 let g:gruvbox_contrast_dark="medium"
 colo gruvbox
 set bg=dark
+
+"" Color theme nord
+"" colorscheme nord
 
 "" Load NERDTree file explorer on startup
 autocmd vimenter * NERDTree
@@ -205,6 +218,10 @@ let g:ipython_cell_tag = ['# %%'] " to avoid ambiguity with ## which is part of 
 let g:ipython_cell_delimit_cells_by='tags' " this can be switched to tags
 " map <Leader>rf to start IPython
 " nnoremap <Leader>rf :SlimeSend1 ipython --matplotlib<CR>
+
+"" for R specifically
+"" disable this because it interfers with python
+"" let g:ipython_cell_cell_command = 'eval(parse(text=clipr::read_clip()))'
 
 " map <Leader>a to run script
 nnoremap <Leader>a :IPythonCellRun<CR>
@@ -280,6 +297,18 @@ let g:tagbar_type_r = {
     \ ]
 \ }
 
+"" tagbar for Rmd configuration
+"" https://gist.github.com/MaximeWack/cdbdcd373d68d1fe5b3aca22e3dcfe46
+let g:tagbar_type_rmd = {
+          \   'ctagstype':'rmd'
+          \ , 'kinds':['h:header', 'c:chunk', 'f:function', 'v:variable']
+          \ , 'sro':'&&&'
+          \ , 'kind2scope':{'h':'header', 'c':'chunk'}
+          \ , 'sort':0
+          \ , 'ctagsbin':'/Users/mmaksimov/.vim/rmdtags.py'
+          \ , 'ctagsargs': ''
+          \ }
+
 "" jupytext
 "" let g:jupytext_fmt = 'Rmd'
 "" let g:jupytext_fmt = 'py:percent'
@@ -298,16 +327,16 @@ let g:pydocstring_formatter = 'google'
 let g:pydocstring_enable_mapping = 0
 
 "" copilot
-imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
-let g:copilot_no_tab_map = v:true
-imap <C-K> <Plug>(copilot-next)
+"" imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+"" let g:copilot_no_tab_map = v:true
+"" imap <C-K> <Plug>(copilot-next)
 
 "" Register file templates
 if has("autocmd")
   augroup templates
     autocmd BufNewFile *.sh 0r ~/.vim/templates/skeleton.sh
-    autocmd BufNewFile *.R,*.r 0r ~/.vim/templates/skeleton.R
-    autocmd BufNewFile *.Rmd,*.rmd 0r ~/.vim/templates/skeleton.Rmd
+    autocmd BufNewFile *.r 0r ~/.vim/templates/skeleton.R
+    autocmd BufNewFile *.rmd 0r ~/.vim/templates/skeleton.Rmd
     autocmd BufNewFile *.qsub.sh 0r ~/.vim/templates/skeleton.qsub.sh
     autocmd BufNewFile *.py 0r ~/.vim/templates/skeleton.py
     autocmd BufNewFile *.argo.yaml 0r ~/.vim/templates/skeleton.argo.yaml
@@ -317,27 +346,45 @@ endif
 "" Snakefile syntax
 au BufNewFile,BufRead Snakefile set syntax=snakemake
 au BufNewFile,BufRead *.snake set syntax=snakemake
+au BufNewFile,BufRead *.cls set syntax=tex
 
 "" Rust
-let g:racer_cmd = "/home/mmaksimov/.cargo/bin/racer"
-augroup Racer
-    autocmd!
-    autocmd FileType rust nmap <buffer> gd         <Plug>(rust-def)
-    autocmd FileType rust nmap <buffer> gs         <Plug>(rust-def-split)
-    autocmd FileType rust nmap <buffer> gx         <Plug>(rust-def-vertical)
-    autocmd FileType rust nmap <buffer> gt         <Plug>(rust-def-tab)
-    autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
-    autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
-augroup END
+"" let g:racer_cmd = "/home/mmaksimov/.cargo/bin/racer"
+"" augroup Racer
+""     autocmd!
+""     autocmd FileType rust nmap <buffer> gd         <Plug>(rust-def)
+""     autocmd FileType rust nmap <buffer> gs         <Plug>(rust-def-split)
+""     autocmd FileType rust nmap <buffer> gx         <Plug>(rust-def-vertical)
+""     autocmd FileType rust nmap <buffer> gt         <Plug>(rust-def-tab)
+""     autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
+""     autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
+"" augroup END
+"" use ALE for this instead
 
 "" ALE
-let g:ale_linters = {'python': ['flake8', 'ruff']}
-let g:ale_fixers = {'python': ['black'], 'yaml': ['yamlfix']}
+"" ALE will enable lintr by default if no specified here
+"" lintr was causing issues with many hiddern buffer cache files being open; had to uninstall it
+"" let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': ["languageserver"], 'r': ["languageserver"]}
+let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': [], 'r': []}
+let g:ale_fixers = {'python': ['black', 'isort'], 'yaml': ['yamlfix'], 'rust': ['rustfmt', 'trim_whitespace', 'remove_trailing_lines'], 'rmd': ['styler'], 'r': ['styler']}
+
+"" Python
 let g:ale_python_flake8_options = '--max-line-length=120'
 let g:ale_python_black_options = '-l 120'
 let g:ale_python_ruff_options = '-l 120'
+let g:ale_python_isort_options = '--profile black -l 100'
 "" let g:ale_fix_on_save = 1
 let g:ale_virtualtext_cursor = 'disabled'
+
+"" Rust
+set omnifunc=ale#completion#OmniFunc
+let g:ale_completion_enabled = 1
+let g:ale_rust_rustfmt_options = '--config max_width=120,use_small_heuristics=Max'
+
+" Next three lines are to enable C-Space to autocomplete, omnicomplete
+inoremap <C-Space> <C-x><C-o>
+imap <buffer> <Nul> <C-Space>
+smap <buffer> <Nul> <C-Space>
 
 "" ignore terminal-type windows when using :bprev, :bnext
 augroup termIgnore
