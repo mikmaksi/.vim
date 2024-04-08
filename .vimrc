@@ -235,6 +235,10 @@ let R_assign = 0
 "     \ 'r': ['R', '--slave', '-e', 'languageserver::run()'],
 "     \ }
 
+" need to set this variable, otherwise syntax hl can disappear after <C-L>
+" share/vim/vim91/syntax/r.vim
+let r_syntax_minlines=10000
+
 " }}}
 
 " ftdetect {{{
