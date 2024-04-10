@@ -139,11 +139,11 @@ nmap <C-E> <End>
 imap <C-E> <End>
 vmap <C-E> <End>
 
-" autocompletion
 " enable C-Space to autocomplete, omnicomplete
-inoremap <C-Space> <C-x><C-o>
-inoremap <buffer> <Nul> <C-Space>
-snoremap <buffer> <Nul> <C-Space>
+" https://stackoverflow.com/questions/510503/ctrlspace-for-omni-and-keyword-completion-in-vim
+inoremap <C-Space> <C-X><C-O>
+imap <buffer> <Nul> <C-Space>
+smap <buffer> <Nul> <C-Space>
 
 " }}}
 
@@ -403,8 +403,8 @@ let g:tagbar_type_rmd = {
 
 " ALE will enable lintr by default if no specified here
 " lintr was causing issues with many hiddern buffer cache files being open; had to uninstall it
-" let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': ["languageserver"], 'r': ["languageserver"]}
-let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': [], 'r': []}
+let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': ["languageserver"], 'r': ["languageserver"]}
+" let g:ale_linters = {'python': ['flake8', 'ruff'], 'rust': ['analyzer', 'cargo', 'rls'], 'rmd': [], 'r': []}
 let g:ale_fixers = {'python': ['black', 'isort'], 'yaml': ['yamlfix'], 'rust': ['rustfmt', 'trim_whitespace', 'remove_trailing_lines'], 'rmd': ['styler'], 'r': ['styler']}
 
 " python
