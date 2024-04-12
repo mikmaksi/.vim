@@ -36,6 +36,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 
 " R
 Plug 'jalvesaq/Nvim-R'
+Plug 'jalvesaq/cmp-nvim-r',  { 'branch': 'main' }
 Plug 'plasticboy/vim-markdown'
 Plug 'vim-pandoc/vim-rmarkdown'
 Plug 'vim-pandoc/vim-pandoc'
@@ -296,10 +297,6 @@ let g:ipython_cell_tag = ['# %%'] " to avoid ambiguity with ## which is part of 
 "" let g:ipython_cell_delimit_cells_by='marks' " this can be switched to tags
 let g:ipython_cell_delimit_cells_by='tags' " this can be switched to tags
 
-" for R specifically
-" note: disable this because it interfers with python
-" let g:ipython_cell_cell_command = 'eval(parse(text=clipr::read_clip()))'
-
 " run script
 nnoremap <Leader>a :IPythonCellRun<CR>
 
@@ -327,6 +324,10 @@ nnoremap <Leader>p :IPythonCellPrevCommand<CR>
 
 " restart ipython
 nnoremap <Leader>Q :IPythonCellRestart<CR>
+
+" set g:ipython_cell_cell_command depending of file type
+autocmd BufEnter *.py let g:ipython_cell_cell_command = '%paste -q'
+autocmd BufEnter *.R let g:ipython_cell_cell_command = 'eval(parse(text=clipr::read_clip()))'
 
 " }}}
 
@@ -418,6 +419,7 @@ let g:ale_virtualtext_cursor = 'disabled'
 " Rust
 set omnifunc=ale#completion#OmniFunc
 let g:ale_completion_enabled = 1
+let g:ale_completion_delay = 500
 let g:ale_rust_rustfmt_options = '--config max_width=120,use_small_heuristics=Max'
 
 " }}}
